@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mapa.css') }}">
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="{{ url_for('inicio') }}">Início</a>
+        <a href="{{ url_for('mapa') }}">Mapa</a>
+        <a href="{{ url_for('snake') }}">Snake</a>
+        <a href="{{ url_for('jogo_memoria') }}">Memória</a>
+        <a href="{{ url_for('pacman') }}">Pacman</a>
+        <a href="{{ url_for('ranking') }}">Ranking</a>
+    </nav>
+
+    <main class="map-page">
+        <section class="map-card">
+            <h1>Mapa dos Jogos</h1>
+            <div class="mapa">
+                <img src="{{ url_for('static', filename='img/mapa.png') }}" alt="Mapa dos jogos" class="map-image">
+
+                <a href="{{ url_for('ranking') }}" class="icone-jogo quiz" aria-label="Abrir ranking"></a>
+                <a href="{{ url_for('snake') }}" class="icone-jogo snake" aria-label="Abrir Snake"></a>
+                <a href="{{ url_for('jogo_memoria') }}" class="icone-jogo memoria" aria-label="Abrir jogo da memória"></a>
+                <a href="{{ url_for('pacman') }}" class="icone-jogo pacman" aria-label="Abrir Pacman"></a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

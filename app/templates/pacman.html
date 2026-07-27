@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <title>Pac-man</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pacman.css') }}">
+    <script src="{{ url_for('static', filename='js/pacman.js') }}"></script>
+  </head>
+  <body>
+    <nav class="top-nav">
+      <a href="{{ url_for('inicio') }}">Início</a>
+      <a href="{{ url_for('mapa') }}">Mapa</a>
+      <a href="{{ url_for('snake') }}">Snake</a>
+      <a href="{{ url_for('jogo_memoria') }}">Memória</a>
+      <a href="{{ url_for('pacman') }}">Pacman</a>
+      <a href="{{ url_for('ranking') }}">Ranking</a>
+    </nav>
+
+    <main class="game-shell">
+      <section class="game-panel">
+        <div class="game-header">
+          <h1>Pac-man</h1>
+          <p>Use as setas do teclado para jogar</p>
+        </div>
+
+        <div class="hud">
+          <div class="hud-card">
+            <span class="hud-label">Pontuação</span>
+            <strong id="score">0</strong>
+          </div>
+          <div class="hud-card">
+            <span class="hud-label">Objetivo</span>
+            <strong>Coma todos os pontos</strong>
+          </div>
+        </div>
+
+        <div class="grid"></div>
+      </section>
+    </main>
+  </body>
+</html>

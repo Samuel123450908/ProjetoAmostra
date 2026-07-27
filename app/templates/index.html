@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Início</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+    <main class="hero-screen">
+        <section class="welcome-card">
+            <h1>Bem-vindo ao seu universo de jogos</h1>
+            <p>Escolha um nickname e entre para explorar o mapa.</p>
+
+            <div class="campo-nickname">
+                <input
+                    type="text"
+                    id="nickname"
+                    placeholder="Digite seu nickname"
+                    maxlength="20"
+                >
+
+                <div class="buttons-row">
+                    <button id="iniciar" type="button">Entrar</button>
+                    <button id="gerar-nome" type="button">Nome aleatório</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+</body>
+</html>

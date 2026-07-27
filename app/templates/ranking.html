@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ranking.css') }}">
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="{{ url_for('inicio') }}">Início</a>
+        <a href="{{ url_for('mapa') }}">Mapa</a>
+        <a href="{{ url_for('snake') }}">Snake</a>
+        <a href="{{ url_for('jogo_memoria') }}">Memória</a>
+        <a href="{{ url_for('pacman') }}">Pacman</a>
+        <a href="{{ url_for('ranking') }}">Ranking</a>
+    </nav>
+
+    <main class="ranking-page">
+        <section class="ranking-card">
+            <div class="ranking-header">
+                <h1>Ranking Geral</h1>
+                <p>Veja o desempenho dos jogadores nos três jogos.</p>
+            </div>
+
+            <div class="ranking-table">
+                <div class="table-row table-head">
+                    <span>Usuário</span>
+                    <span>Pacman</span>
+                    <span>Mario</span>
+                    <span>Snake</span>
+                </div>
+
+                {% for player in ranking_data %}
+                <div class="table-row">
+                    <span class="nickname">{{ player.nickname }}</span>
+                    <span>{{ player.pacman }} pts</span>
+                    <span>{{ player.mario }} pts</span>
+                    <span>{{ player.snake }} pts</span>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+</body>
+</html>

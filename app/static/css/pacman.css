@@ -1,0 +1,151 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #111827, #1f2937);
+    color: #f9fafb;
+}
+
+.top-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(17, 24, 39, 0.95);
+    flex-wrap: wrap;
+}
+
+.top-nav a {
+    color: #fbbf24;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.top-nav a:hover {
+    color: #fde68a;
+}
+
+.game-shell {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem 3rem;
+}
+
+.game-panel {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(8px);
+}
+
+.game-header {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.game-header h1 {
+    margin: 0 0 0.25rem;
+    font-size: 2rem;
+    color: #fbbf24;
+}
+
+.game-header p {
+    margin: 0;
+    color: #d1d5db;
+}
+
+.hud {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.hud-card {
+    background: rgba(0, 0, 0, 0.35);
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    min-width: 170px;
+    text-align: center;
+}
+
+.hud-label {
+    display: block;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #93c5fd;
+    margin-bottom: 0.25rem;
+}
+
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    width: 560px;
+    height: 560px;
+    border: 6px solid #fbbf24;
+    border-radius: 8px;
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.2);
+    background: #000;
+}
+
+.grid div {
+    width: 20px;
+    height: 20px;
+    box-sizing: border-box;
+}
+
+.pac-dot {
+    background-color: #fde68a;
+    border: 4px solid #000;
+    box-sizing: border-box;
+    border-radius: 50%;
+}
+
+.wall {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border: 1px solid #93c5fd;
+}
+
+.power-pellet {
+    background: #f43f5e;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.blinky {
+    background: radial-gradient(circle at 30% 30%, #fff, #ff4d4d 55%, #b91c1c);
+    border-radius: 8px 8px 2px 2px;
+}
+
+.pinky {
+    background: radial-gradient(circle at 30% 30%, #fff, #f9a8d4 55%, #ec4899);
+    border-radius: 8px 8px 2px 2px;
+}
+
+.inky {
+    background: radial-gradient(circle at 30% 30%, #fff, #67e8f9 55%, #0891b2);
+    border-radius: 8px 8px 2px 2px;
+}
+
+.clyde {
+    background: radial-gradient(circle at 30% 30%, #fff, #fdba74 55%, #ea580c);
+    border-radius: 8px 8px 2px 2px;
+}
+
+.pac-man {
+    background: radial-gradient(circle at 30% 30%, #fff7b2, #facc15 60%, #ca8a04);
+    border-radius: 50%;
+    
+}
+
+.scared-ghost {
+    background: radial-gradient(circle at 30% 30%, #fff, #5eead4 55%, #0f766e);
+    border-radius: 8px 8px 2px 2px;
+}
+
+.ghost {
+    border: 1px solid rgba(255,255,255,0.3);
+}
