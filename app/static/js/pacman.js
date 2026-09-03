@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const scoreDisplay = document.getElementById("score")
     const width = 28
     let score = 0
+    let gameFinished = false
     const grid = document.querySelector(".grid")
 
     if (!grid || !scoreDisplay) {
@@ -77,6 +78,17 @@ document.addEventListener("DOMContentLoaded", () => {
     let pacmanCurrentIndex = 490
     squares[pacmanCurrentIndex].classList.add("pac-man")
 
+    const ghosts = [
+        { className: "blinky", currentIndex: 348, direction: -1 },
+        { className: "pinky", currentIndex: 349, direction: 1 },
+        { className: "inky", currentIndex: 350, direction: -1 },
+        { className: "clyde", currentIndex: 351, direction: 1 },
+    ]
+
+    ghosts.forEach((ghost) => {
+        squares[ghost.currentIndex].classList.add("ghost", ghost.className)
+    })
+
     //move pacman
     function movePacman(e) {
         squares[pacmanCurrentIndex].classList.remove("pac-man")
@@ -139,6 +151,12 @@ document.addEventListener("DOMContentLoaded", () => {
         checkForWin()
     }
 
+    document.addEventListener("keydown", (event) => {
+        if (["ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown"].includes(event.key)) {
+            event.preventDefault()
+        }
+    })
+
     document.addEventListener("keyup", movePacman)
 
     //what happens when you eat a pac-dot
@@ -155,114 +173,91 @@ document.addEventListener("DOMContentLoaded", () => {
         if (squares[pacmanCurrentIndex].classList.contains("power-pellet")) {
             score += 10
             scoreDisplay.innerHTML = score
-            ghosts.forEach(ghost => ghost.isScared = true)
-            setTimeout(unScareGhosts, 10000)
             squares[pacmanCurrentIndex].classList.remove("power-pellet")
         }
     }
 
-    //make the ghosts stop flashing
-    function unScareGhosts() {
-        ghosts.forEach(ghost => ghost.isScared = false)
-    }
-
-    //create ghosts using Constructor
-    class Ghost {
-        constructor(className, startIndex, speed) {
-            this.className = className
-            this.startIndex = startIndex
-            this.speed = speed
-            this.currentIndex = startIndex
-            this.isScared = false
-            this.timerId = NaN
-
+    function checkForGameOver() {
+        const hitGhost = squares[pacmanCurrentIndex].classList.contains("ghost")
+        if (!hitGhost || gameFinished) {
+            return
         }
+
+        gameFinished = true
+        window.clearInterval(ghostTimer)
+        document.removeEventListener("keyup", movePacman)
+        saveScore()
+        window.alert(`Fim de jogo! Pontuação: ${score}`)
     }
-
-    //all my ghosts
-    const ghosts = [
-        new Ghost("blinky", 348, 250),
-        new Ghost("pinky", 376, 400),
-        new Ghost("inky", 351, 300),
-        new Ghost("clyde", 379, 500),
-    ]
-
-    //draw my ghosts onto the grid
-    ghosts.forEach(ghost =>
-        squares[ghost.currentIndex].classList.add(ghost.className, "ghost"))
-
-    //move ghosts randomly
-    ghosts.forEach(ghost => moveGhost(ghost))
 
     function moveGhost(ghost) {
-        const directions = [-1, 1, width, -width]
-        let direction = directions[Math.floor(Math.random() * directions.length)]
-
-        ghost.timerId = setInterval(function () {
-            //if next square your ghost is going to go to does not have a ghost and does not have a wall
-            if (
-                !squares[ghost.currentIndex + direction].classList.contains("ghost") &&
-                !squares[ghost.currentIndex + direction].classList.contains("wall")
-            ) {
-                squares[ghost.currentIndex].classList.remove(ghost.className, "ghost", "scared-ghost")
-                ghost.currentIndex += direction
-                squares[ghost.currentIndex].classList.add(ghost.className, "ghost")
-                // else find a new random direction to go in
-            } else direction = directions[Math.floor(Math.random() * directions.length)]
-            // if the ghost is currently scared
-            if (ghost.isScared) {
-                squares[ghost.currentIndex].classList.add("scared-ghost")
-            }
-
-            //if the ghost is currently scared and pacman is on it
-            if (ghost.isScared && squares[ghost.currentIndex].classList.contains("pac-man")) {
-                ghost.isScared = false
-                squares[ghost.currentIndex].classList.remove(ghost.className, "ghost", "scared-ghost")
-                ghost.currentIndex = ghost.startIndex
-                score += 100
-                scoreDisplay.innerHTML = score
-                squares[ghost.currentIndex].classList.add(ghost.className, "ghost")
-            }
-            checkForGameOver()
-        }, ghost.speed)
-    }
-
-    //check for a game over
-    function finalizarPartida() {
-        if (window.__pacmanPontuacaoEnviada) {
-            return Promise.resolve()
+        if (gameFinished) {
+            return
         }
 
-        window.__pacmanPontuacaoEnviada = true
-        return persistirPontuacao()
+        const possibleMoves = [-1, 1, -width, width].filter((move) => {
+            const nextIndex = ghost.currentIndex + move
+            const crossesRow =
+                (move === -1 && ghost.currentIndex % width === 0) ||
+                (move === 1 && ghost.currentIndex % width === width - 1)
+            return (
+                nextIndex >= 0 &&
+                nextIndex < squares.length &&
+                !crossesRow &&
+                !squares[nextIndex].classList.contains("wall") &&
+                !squares[nextIndex].classList.contains("ghost")
+            )
+        })
+
+        if (possibleMoves.length === 0) {
+            return
+        }
+
+        const forwardMoves = possibleMoves.filter((move) => move !== -ghost.direction)
+        const moves = forwardMoves.length > 0 ? forwardMoves : possibleMoves
+        ghost.direction = moves[Math.floor(Math.random() * moves.length)]
+
+        squares[ghost.currentIndex].classList.remove("ghost", ghost.className)
+        ghost.currentIndex += ghost.direction
+        squares[ghost.currentIndex].classList.add("ghost", ghost.className)
+        checkForGameOver()
     }
 
-    function checkForGameOver() {
-        if (
-            squares[pacmanCurrentIndex].classList.contains("ghost") &&
-            !squares[pacmanCurrentIndex].classList.contains("scared-ghost")
-        ) {
-            ghosts.forEach(ghost => clearInterval(ghost.timerId))
-            document.removeEventListener("keyup", movePacman)
+    const ghostTimer = window.setInterval(() => {
+        ghosts.forEach(moveGhost)
+    }, 350)
 
-            finalizarPartida().finally(() => {
-                setTimeout(function () {
-                    alert("Game Over")
-                }, 500)
+    async function saveScore() {
+        const nickname = localStorage.getItem("nickname")
+        if (!nickname) {
+            return
+        }
+
+        try {
+            await fetch("/api/jogador/pontos", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nickname, jogo: "pacman", pontos: score }),
             })
+        } catch (error) {
+            console.error("Não foi possível salvar a pontuação.", error)
         }
     }
 
     function checkForWin() {
-        if (score >= 274) {
-            ghosts.forEach(ghost => clearInterval(ghost.timerId))
-            document.removeEventListener("keyup", movePacman)
+        const remainingDots = squares.some((square) =>
+            square.classList.contains("pac-dot") ||
+            square.classList.contains("power-pellet")
+        )
 
-            finalizarPartida().finally(() => {
-                setTimeout(function () {
-                    alert("You have WON!")
-                }, 500)
-            })
+        if (remainingDots || gameFinished) {
+            return
         }
+
+        gameFinished = true
+        window.clearInterval(ghostTimer)
+        document.removeEventListener("keyup", movePacman)
+        saveScore()
+        window.alert(`Você venceu! Pontuação: ${score}`)
     }
 })
