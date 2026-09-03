@@ -29,18 +29,21 @@
                     <span>Pacman</span>
                     <span>Mario</span>
                     <span>Snake</span>
+                    <span>Ações</span>
                 </div>
 
                 {% for player in ranking_data %}
-                <div class="table-row">
+                <div class="table-row player-row" data-player-id="{{ player.id }}">
                     <span class="nickname">{{ player.nickname }}</span>
                     <span>{{ player.pacman }} pts</span>
                     <span>{{ player.mario }} pts</span>
                     <span>{{ player.snake }} pts</span>
+                    <button class="delete-player" type="button" title="Excluir jogador" aria-label="Excluir {{ player.nickname }}">Excluir</button>
                 </div>
                 {% endfor %}
             </div>
         </section>
     </main>
+    <script src="{{ url_for('static', filename='js/ranking.js') }}"></script>
 </body>
 </html>

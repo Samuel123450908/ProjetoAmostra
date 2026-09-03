@@ -62,7 +62,7 @@ body {
 
 .table-row {
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr auto;
     gap: 0.75rem;
     padding: 0.85rem 1rem;
     border-radius: 12px;
@@ -81,4 +81,35 @@ body {
 .nickname {
     font-weight: bold;
     color: #fde68a;
+}
+
+.delete-player {
+    border: 1px solid #f87171;
+    border-radius: 8px;
+    padding: 0.45rem 0.7rem;
+    background: transparent;
+    color: #fecaca;
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.delete-player:hover {
+    background: #dc2626;
+    color: #fff;
+}
+
+@media (max-width: 700px) {
+    .table-row {
+        grid-template-columns: 1.3fr 1fr 1fr 1fr;
+    }
+
+    .table-head span:last-child,
+    .delete-player {
+        grid-column: 1 / -1;
+    }
+
+    .delete-player {
+        justify-self: start;
+    }
 }
