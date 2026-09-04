@@ -58,6 +58,18 @@ class AppDatabaseTestCase(unittest.TestCase):
         jogador = Jogador.query.filter_by(nickname="Teste").first()
         self.assertEqual(jogador.pontos_pacman, 125)
 
+    def test_update_score_for_snake(self):
+        response = self.client.post(
+            "/api/jogador/pontos",
+            json={"nickname": "SnakePlayer", "jogo": "snake", "pontos": 42},
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        jogador = Jogador.query.filter_by(nickname="SnakePlayer").first()
+        self.assertIsNotNone(jogador)
+        self.assertEqual(jogador.pontos_snake, 42)
+
 
 if __name__ == "__main__":
     unittest.main()

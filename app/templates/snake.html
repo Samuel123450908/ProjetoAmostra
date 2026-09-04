@@ -1,21 +1,43 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake</title>
+    <title>Snake Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/snake.css') }}">
 </head>
 <body>
-    <nav>
-        <a href="{{ url_for('inicio') }}">Início</a>
-        <a href="{{ url_for('mapa') }}">Mapa</a>
-        <a href="{{ url_for('snake') }}">Snake</a>
-        <a href="{{ url_for('jogo_memoria') }}">Memória</a>
-        <a href="{{ url_for('pacman') }}">Pacman</a>
-        <a href="{{ url_for('ranking') }}">Ranking</a>
-    </nav>
+    <a class="map-button" href="{{ url_for('mapa') }}">Voltar ao mapa</a>
 
-    <h1>Snake</h1>
-    <p>Esta página ainda pode receber o jogo.</p>
+    <div class="game-container">
+        <h1>🐍 Snake Game</h1>
+
+        <div class="score-board">
+            <div>Score <span id="score">0</span></div>
+            <div>High Score <span id="highScore">0</span></div>
+        </div>
+
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+        <div id="gameOver" class="game-over">
+            <h2>Game Over!</h2>
+            <p>Your Score: <span id="finalScore">0</span></p>
+            <button onclick="restartGame()">Play Again</button>
+        </div>
+
+        <div class="controls">
+            <button onclick="changeDirection('up')">⬆️</button>
+
+            <div>
+                <button onclick="changeDirection('left')">⬅️</button>
+                <button onclick="changeDirection('down')">⬇️</button>
+                <button onclick="changeDirection('right')">➡️</button>
+            </div>
+        </div>
+
+        <p class="hint">Use Arrow Keys or WASD to move</p>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/snake.js') }}"></script>
 </body>
 </html>
