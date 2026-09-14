@@ -22,6 +22,8 @@
             <div class="mapa">
                 <img src="{{ url_for('static', filename='img/mapa.png') }}" alt="Mapa dos jogos" class="map-image">
 
+                <div class="player" id="player" role="img" aria-label="Personagem do jogador">🧑‍🚀</div>
+
                 <a href="{{ url_for('ranking') }}" class="icone-jogo quiz" aria-label="Abrir ranking"></a>
                 <a href="{{ url_for('snake') }}" class="icone-jogo snake" aria-label="Abrir Snake"></a>
                 <a href="{{ url_for('jogo_memoria') }}" class="icone-jogo memoria" aria-label="Abrir jogo da memória"></a>
@@ -29,5 +31,6 @@
             </div>
         </section>
     </main>
+    <script src="{{ url_for('static', filename='js/mapa.js') }}"></script>
 </body>
 </html>

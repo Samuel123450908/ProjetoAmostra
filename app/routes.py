@@ -1,4 +1,9 @@
+import sqlite3
+from datetime import datetime, timezone
+
 from flask import Blueprint, jsonify, render_template, request
+from sqlalchemy import desc
+
 from . import db
 from .models import Jogador
 
@@ -6,7 +11,25 @@ from .models import Jogador
 bp = Blueprint("api", __name__)
 
 
+def init_scores_db():
+    with sqlite3.connect("jogos.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS scores (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                game_name TEXT NOT NULL,
+                score INTEGER NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        conn.commit()
+
+
 def register_routes(app):
+    init_scores_db()
     app.register_blueprint(bp)
 
     app.add_url_rule("/", "inicio", inicio)
@@ -39,7 +62,7 @@ def pacman():
 
 def ranking():
     jogadores = Jogador.query.order_by(
-        (Jogador.pontos_pacman + Jogador.pontos_mario + Jogador.pontos_snake).desc()
+        desc(Jogador.pontos_pacman + Jogador.pontos_mario + Jogador.pontos_snake)
     ).all()
     return render_template("ranking.html", ranking_data=jogadores)
 
@@ -126,3 +149,82 @@ def excluir_jogador(jogador_id):
     db.session.commit()
 
     return jsonify({"ok": True}), 200
+
+
+@bp.route("/v1/scores", methods=["POST"])
+def salvar_score_interno():
+    dados = request.get_json(silent=True) or {}
+    username = str(dados.get("username") or "").strip()
+    game_name = str(dados.get("game_name") or "").strip()
+    score = dados.get("score")
+
+    if not username or not game_name:
+        return jsonify({"error": "username e game_name são obrigatórios."}), 400
+
+    try:
+        score = int(score)
+    except (TypeError, ValueError):
+        return jsonify({"error": "score inválido."}), 400
+
+    created_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+    with sqlite3.connect("jogos.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO scores (username, game_name, score, created_at) VALUES (?, ?, ?, ?)",
+            (username, game_name, score, created_at),
+        )
+        conn.commit()
+
+    return jsonify({"message": "Pontuação salva com sucesso!"}), 201
+
+
+@bp.route("/v1/scores", methods=["GET"])
+def listar_scores_interno():
+    with sqlite3.connect("jogos.db") as conn:
+        conn.row_factory = sqlite3.Row
+        rows = conn.execute(
+            "SELECT id, username, game_name, score, created_at FROM scores ORDER BY id DESC"
+        ).fetchall()
+
+    scores = [dict(row) for row in rows]
+    return jsonify({"scores": scores}), 200
+
+
+@bp.route("/v1/scores/<username>", methods=["GET"])
+def buscar_score_por_usuario(username):
+    username = username.strip()
+
+    with sqlite3.connect("jogos.db") as conn:
+        conn.row_factory = sqlite3.Row
+        rows = conn.execute(
+            "SELECT id, username, game_name, score, created_at FROM scores WHERE username = ? ORDER BY id DESC",
+            (username,),
+        ).fetchall()
+
+    if not rows:
+        return jsonify({"error": "Usuário não encontrado."}), 404
+
+    scores = [dict(row) for row in rows]
+    return jsonify({"username": username, "scores": scores}), 200
+
+
+@bp.route("/v1/ranking", methods=["GET"])
+def ranking_api():
+    jogadores = Jogador.query.order_by(
+        desc(Jogador.pontos_pacman + Jogador.pontos_mario + Jogador.pontos_snake)
+    ).all()
+
+    payload = [
+        {
+            "id": jogador.id,
+            "nickname": jogador.nickname,
+            "pacman": jogador.pontos_pacman,
+            "mario": jogador.pontos_mario,
+            "snake": jogador.pontos_snake,
+            "total": jogador.pontos_pacman + jogador.pontos_mario + jogador.pontos_snake,
+        }
+        for jogador in jogadores
+    ]
+
+    return jsonify({"ranking": payload}), 200

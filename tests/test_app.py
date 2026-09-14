@@ -70,6 +70,39 @@ class AppDatabaseTestCase(unittest.TestCase):
         self.assertIsNotNone(jogador)
         self.assertEqual(jogador.pontos_snake, 42)
 
+    def test_internal_scores_api(self):
+        response = self.client.post(
+            "/v1/scores",
+            json={"username": "Alice", "game_name": "snake", "score": 99},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertIn("Pontuação salva com sucesso", response.get_json()["message"])
+
+        list_response = self.client.get("/v1/scores")
+        self.assertEqual(list_response.status_code, 200)
+        payload = list_response.get_json()
+        self.assertIn("scores", payload)
+        self.assertTrue(any(item["username"] == "Alice" and item["score"] == 99 for item in payload["scores"]))
+
+    def test_ranking_api_returns_rank_users(self):
+        self.client.post(
+            "/api/jogador",
+            json={"nickname": "TesteRank"},
+            content_type="application/json",
+        )
+        self.client.post(
+            "/api/jogador/pontos",
+            json={"nickname": "TesteRank", "jogo": "pacman", "pontos": 40},
+            content_type="application/json",
+        )
+
+        response = self.client.get("/v1/ranking")
+        self.assertEqual(response.status_code, 200)
+        payload = response.get_json()
+        self.assertIn("ranking", payload)
+        self.assertTrue(any(item["nickname"] == "TesteRank" for item in payload["ranking"]))
+
 
 if __name__ == "__main__":
     unittest.main()
