@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mario</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/Mario-ico.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mario.css') }}?v=2">
+    <script src="{{ url_for('static', filename='js/mario.js') }}" defer></script>
+</head>
+<body>
+    <a class="map-button" href="{{ url_for('mapa') }}">Voltar ao mapa</a>
+
+    <div class="game-board">
+        <div class="score" aria-live="polite">Pontos: <strong id="score">0</strong></div>
+        <img src="{{ url_for('static', filename='img/clouds.png') }}" class="cloud" alt="Nuvens">
+        <img src="{{ url_for('static', filename='img/mario.gif') }}" class="mario" alt="Mario">
+        <img src="{{ url_for('static', filename='img/pipe.png') }}" class="pipe" alt="Cano">
+
+        <div class="game-over">
+            <button class="restart" type="button">REINICIAR</button>
+        </div>
+    </div>
+</body>
+</html>

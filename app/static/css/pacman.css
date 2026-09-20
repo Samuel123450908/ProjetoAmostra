@@ -15,13 +15,13 @@ body {
 }
 
 .top-nav a {
-    color: #fbbf24;
+    color: #24acfb;
     text-decoration: none;
     font-weight: bold;
 }
 
 .top-nav a:hover {
-    color: #fde68a;
+    color: #2989b6;
 }
 
 .game-shell {

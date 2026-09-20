@@ -35,6 +35,7 @@ def register_routes(app):
     app.add_url_rule("/", "inicio", inicio)
     app.add_url_rule("/mapa", "mapa", mapa)
     app.add_url_rule("/snake", "snake", snake)
+    app.add_url_rule("/mario", "mario", mario)
     app.add_url_rule("/memoria", "jogo_memoria", jogo_memoria)
     app.add_url_rule("/pacman", "pacman", pacman)
     app.add_url_rule("/ranking", "ranking", ranking)
@@ -52,6 +53,10 @@ def snake():
     return render_template("snake.html")
 
 
+def mario():
+    return render_template("mario.html")
+
+
 def jogo_memoria():
     return render_template("memoria.html")
 
@@ -62,7 +67,11 @@ def pacman():
 
 def ranking():
     jogadores = Jogador.query.order_by(
-        desc(Jogador.pontos_pacman + Jogador.pontos_mario + Jogador.pontos_snake)
+        desc(
+            db.text(
+                "pontos_pacman + pontos_mario + pontos_snake"
+            )
+        )
     ).all()
     return render_template("ranking.html", ranking_data=jogadores)
 
@@ -101,7 +110,7 @@ def atualizar_pontos():
         return jsonify({"error": "Jogo inválido."}), 400
 
     try:
-        pontos = int(pontos)
+        pontos = int(str(pontos))
     except (ValueError, TypeError):
         return jsonify({"error": "Pontuação inválida."}), 400
 
@@ -162,7 +171,7 @@ def salvar_score_interno():
         return jsonify({"error": "username e game_name são obrigatórios."}), 400
 
     try:
-        score = int(score)
+        score = int(str(score))
     except (TypeError, ValueError):
         return jsonify({"error": "score inválido."}), 400
 
@@ -211,20 +220,18 @@ def buscar_score_por_usuario(username):
 
 @bp.route("/v1/ranking", methods=["GET"])
 def ranking_api():
-    jogadores = Jogador.query.order_by(
-        desc(Jogador.pontos_pacman + Jogador.pontos_mario + Jogador.pontos_snake)
-    ).all()
+    jogadores = Jogador.query.all()
+    payload = []
 
-    payload = [
-        {
-            "id": jogador.id,
-            "nickname": jogador.nickname,
-            "pacman": jogador.pontos_pacman,
-            "mario": jogador.pontos_mario,
-            "snake": jogador.pontos_snake,
-            "total": jogador.pontos_pacman + jogador.pontos_mario + jogador.pontos_snake,
-        }
-        for jogador in jogadores
-    ]
+    for jogador in jogadores:
+        payload.extend(
+            [
+                {"id": jogador.id, "nickname": jogador.nickname, "jogo": "pacman", "pontos": jogador.pontos_pacman or 0},
+                {"id": jogador.id, "nickname": jogador.nickname, "jogo": "mario", "pontos": jogador.pontos_mario or 0},
+                {"id": jogador.id, "nickname": jogador.nickname, "jogo": "snake", "pontos": jogador.pontos_snake or 0},
+            ]
+        )
+
+    payload.sort(key=lambda item: item["pontos"], reverse=True)
 
     return jsonify({"ranking": payload}), 200

@@ -41,6 +41,11 @@ class AppDatabaseTestCase(unittest.TestCase):
         self.assertEqual(ranking_response.status_code, 200)
         self.assertIn(b"Teste", ranking_response.data)
 
+    def test_mario_page_loads(self):
+        response = self.client.get("/mario")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"game-board", response.data)
+
     def test_update_score_for_pacman(self):
         self.client.post(
             "/api/jogador",
