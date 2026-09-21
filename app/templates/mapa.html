@@ -21,8 +21,14 @@
             <h1>Mapa dos Jogos</h1>
             <div class="mapa">
                 <img src="{{ url_for('static', filename='img/mapa.png') }}" alt="Mapa dos jogos" class="map-image">
+                <span class="static-character-cover" aria-hidden="true"></span>
 
-                <div class="player" id="player" role="img" aria-label="Personagem do jogador">🧑‍🚀</div>
+                <img
+                    class="player"
+                    id="player"
+                    src="{{ url_for('static', filename='img/Personagem.png') }}"
+                    alt="Personagem do jogador"
+                >
 
                 <a href="{{ url_for('ranking') }}" class="icone-jogo quiz" aria-label="Abrir ranking"></a>
                 <a href="{{ url_for('snake') }}" class="icone-jogo snake" aria-label="Abrir Snake"></a>
